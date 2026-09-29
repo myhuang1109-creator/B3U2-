@@ -1,0 +1,1999 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B3U2 英語口語對話互動學習站</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Lexend', 'Noto Sans TC', sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 8px;
+    }
+    .active-tab {
+      background-color: #4f46e5;
+      color: #ffffff;
+      box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+    }
+    .timeline-node {
+      transition: all 0.3s ease;
+    }
+    .timeline-node:hover {
+      transform: translateY(-2px);
+    }
+    .pulse-subtle {
+      animation: pulseSubtle 2s infinite;
+    }
+    @keyframes pulseSubtle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.95; transform: scale(1.02); }
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-50 flex flex-col justify-between selection:bg-indigo-100 selection:text-indigo-800">
+
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="app.navHome()">
+        <div class="w-11 h-11 bg-indigo-600 text-white rounded-2xl flex items-center justify-center font-black text-xl shadow-md shadow-indigo-200">
+          U2
+        </div>
+        <div>
+          <h1 class="text-xl font-extrabold text-slate-800 tracking-tight">B3U2 英語口語對話學習站</h1>
+          <p class="text-xs font-bold text-indigo-600">翰林版 Unit 2 特教友善口語互動課堂</p>
+        </div>
+      </div>
+
+      <!-- Header Action Quick Links -->
+      <div class="flex items-center gap-2 flex-wrap text-sm font-bold">
+        <button onclick="app.startDailyChallenge()" class="px-3.5 py-2 bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 rounded-xl transition flex items-center gap-1.5 shadow-sm">
+          <span>⭐ 今日5分鐘</span>
+        </button>
+        <button onclick="app.openTimelineGame()" class="px-3.5 py-2 bg-sky-50 text-sky-700 border border-sky-200 hover:bg-sky-100 rounded-xl transition flex items-center gap-1.5 shadow-sm">
+          <span>⏱️ 時間線練習</span>
+        </button>
+        <button onclick="app.openMistakesModal()" class="px-3.5 py-2 bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 rounded-xl transition flex items-center gap-1.5 shadow-sm">
+          <span>❌ 錯題本</span>
+          <span id="mistake-count-badge" class="bg-rose-600 text-white text-xs px-2 py-0.5 rounded-full font-black hidden">0</span>
+        </button>
+        <button onclick="app.openStatsModal()" class="px-3.5 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 rounded-xl transition flex items-center gap-1.5 shadow-sm">
+          <span>🏆 我的成績</span>
+        </button>
+        <button onclick="app.toggleTeacherMode()" class="px-3.5 py-2 bg-slate-800 text-white hover:bg-slate-700 rounded-xl transition flex items-center gap-1.5 shadow-sm">
+          <span id="teacher-mode-btn-text">👩‍🏫 教師模式</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-6xl mx-auto w-full px-4 py-6 flex-1">
+    
+    <!-- STUDENT VIEW: HOMEPAGE -->
+    <section id="view-home" class="space-y-8">
+      <!-- Hero Banner -->
+      <div class="bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+        <div class="absolute -right-6 -bottom-6 text-indigo-400/20 text-9xl font-black select-none pointer-events-none">B3U2</div>
+        <div class="relative z-10 max-w-2xl space-y-3">
+          <span class="bg-indigo-500/40 text-indigo-100 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider inline-block backdrop-blur-sm border border-indigo-300/20">
+            特教資源班專屬教材
+          </span>
+          <h2 class="text-2xl sm:text-4xl font-black text-white">看一看・聽一聽・說一說・玩一玩</h2>
+          <p class="text-indigo-100 text-base sm:text-lg leading-relaxed">
+            透過圖像、時間線與生動對話，輕鬆掌握 <span class="bg-white/20 px-2 py-0.5 rounded font-bold">This is...</span>, <span class="bg-white/20 px-2 py-0.5 rounded font-bold">Whose / mine / hers</span> 以及 <span class="bg-white/20 px-2 py-0.5 rounded font-bold">after / before / when</span>！
+          </p>
+          <div class="pt-2 flex flex-wrap gap-3">
+            <button onclick="app.startCardPractice(0)" class="bg-white text-indigo-700 hover:bg-indigo-50 font-black px-6 py-3.5 rounded-2xl shadow-lg transition text-base flex items-center gap-2">
+              <span>🚀 開始第 1 單元對話卡</span>
+            </button>
+            <button onclick="app.startDailyChallenge()" class="bg-indigo-500/50 hover:bg-indigo-500/70 text-white border border-indigo-300/30 font-bold px-5 py-3.5 rounded-2xl transition text-base flex items-center gap-2">
+              <span>⏱️ 今日 5 分鐘挑戰</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6 Big Dialogue Cards Grid -->
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-extrabold text-slate-800 flex items-center gap-2">
+            <span class="text-2xl">🗣️</span> 6 張口語情境對話卡
+          </h3>
+          <span class="text-sm font-bold text-slate-500">完成度：<span id="home-progress-text" class="text-indigo-600 font-black">0/6</span></span>
+        </div>
+
+        <div id="cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- Cards injected dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- CARD PRACTICE CONTAINER -->
+    <section id="view-card-practice" class="hidden space-y-6">
+      <!-- Card Header / Nav Breadcrumb -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+        <button onclick="app.navHome()" class="text-slate-600 hover:text-slate-900 font-bold text-sm flex items-center gap-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-100 transition">
+          <span>⬅️ 返回選單</span>
+        </button>
+        <div class="text-center flex-1 min-w-[200px]">
+          <span id="practice-card-badge" class="text-xs font-black px-2.5 py-0.5 bg-indigo-100 text-indigo-700 rounded-full">卡片 1 / 6</span>
+          <h3 id="practice-card-title" class="text-lg font-black text-slate-800 mt-0.5">---</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="app.prevCard()" id="btn-prev-card" class="p-2 text-slate-500 hover:text-indigo-600 font-bold rounded-lg hover:bg-slate-100">◀️</button>
+          <button onclick="app.nextCard()" id="btn-next-card" class="p-2 text-slate-500 hover:text-indigo-600 font-bold rounded-lg hover:bg-slate-100">▶️</button>
+        </div>
+      </div>
+
+      <!-- Step Navigation Tabs (7-Step Flow) -->
+      <div class="bg-white p-2 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto custom-scrollbar">
+        <div class="flex items-center gap-1.5 min-w-[650px] text-xs font-bold text-slate-600" id="step-tabs-bar">
+          <button onclick="app.switchStep(0)" class="step-tab px-3.5 py-2 rounded-xl transition flex items-center gap-1" data-step="0">① 看一看</button>
+          <button onclick="app.switchStep(1)" class="step-tab px-3.5 py-2 rounded-xl transition flex items-center gap-1" data-step="1">② 聽一聽</button>
+          <button onclick="app.switchStep(2)" class="step-tab px-3.5 py-2 rounded-xl transition flex items-center gap-1" data-step="2">③ 跟著說</button>
+          <button onclick="app.switchStep(3)" class="step-tab px-3.5 py-2 rounded-xl transition flex items-center gap-1" data-step="3">④ 選一選</button>
+          <button onclick="app.switchStep(4)" class="step-tab px-3.5 py-2 rounded-xl transition flex items-center gap-1" data-step="4">⑤ 排一排</button>
+          <button onclick="app.switchStep(5)" class="step-tab px-3.5 py-2 rounded-xl transition flex items-center gap-1" data-step="5">⑥ 角色扮演</button>
+          <button onclick="app.switchStep(6)" class="step-tab px-3.5 py-2 rounded-xl transition flex items-center gap-1" data-step="6">⑦ 小挑戰</button>
+        </div>
+      </div>
+
+      <!-- STEP STEP CONTENT AREA -->
+      <div id="step-content" class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-lg min-h-[420px] flex flex-col justify-between">
+        <!-- Content inserted dynamically -->
+      </div>
+    </section>
+
+    <!-- TIMELINE GAME VIEW -->
+    <section id="view-timeline-game" class="hidden space-y-6">
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <button onclick="app.navHome()" class="text-slate-600 hover:text-slate-900 font-bold text-sm flex items-center gap-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-100 transition">
+          <span>⬅️ 返回首頁</span>
+        </button>
+        <h3 class="text-xl font-black text-slate-800 flex items-center gap-2">⏱️ AFTER / BEFORE / WHEN 時間線互動實驗室</h3>
+        <div></div>
+      </div>
+
+      <div class="bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
+        <!-- Concept Selector Buttons -->
+        <div class="flex flex-wrap gap-3 justify-center">
+          <button onclick="app.loadTimelineConcept('after')" id="tl-btn-after" class="px-5 py-3 rounded-2xl font-black text-base border transition bg-indigo-600 text-white border-indigo-400 shadow-lg">
+            📚 1. AFTER（先 A，再 B）
+          </button>
+          <button onclick="app.loadTimelineConcept('before')" id="tl-btn-before" class="px-5 py-3 rounded-2xl font-black text-base border transition bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700">
+            🧼 2. BEFORE（A 在 B 之前）
+          </button>
+          <button onclick="app.loadTimelineConcept('when')" id="tl-btn-when" class="px-5 py-3 rounded-2xl font-black text-base border transition bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700">
+            📞 3. WHEN（當……的時候）
+          </button>
+        </div>
+
+        <!-- Dynamic Interactive Timeline Box -->
+        <div id="timeline-interactive-box" class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 space-y-6">
+          <!-- Timeline contents dynamically rendered -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TEACHER MODE VIEW -->
+    <section id="view-teacher-mode" class="hidden space-y-6">
+      <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-black text-amber-800 bg-amber-200 px-2.5 py-1 rounded-md uppercase">教師後台管理</span>
+          <h3 class="text-xl font-black text-slate-900 mt-1">👩‍🏫 教材資料庫與學生學習診斷</h3>
+          <p class="text-xs text-slate-600 font-bold mt-0.5">您可以檢視 DATA 結構、核心文法重點，並匯出或清除學生成績。</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="app.openClearRecordModal()" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold text-sm transition shadow-sm">
+            🗑️ 清除學習紀錄
+          </button>
+          <button onclick="app.toggleTeacherMode()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold text-sm transition shadow-sm">
+            🔙 返回學生模式
+          </button>
+        </div>
+      </div>
+
+      <!-- Teacher Data Cards Tabs -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Vocab & Key Phrases -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
+          <h4 class="font-extrabold text-slate-800 text-lg border-b pb-2 flex items-center gap-2">📖 核心單字與片語</h4>
+          <ul id="teacher-vocab-list" class="space-y-2 text-sm text-slate-700"></ul>
+        </div>
+
+        <!-- Grammar Rules -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
+          <h4 class="font-extrabold text-slate-800 text-lg border-b pb-2 flex items-center gap-2">💡 核心口訣與句型</h4>
+          <ul id="teacher-grammar-list" class="space-y-2.5 text-sm text-slate-700"></ul>
+        </div>
+
+        <!-- Class Statistics -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
+          <h4 class="font-extrabold text-slate-800 text-lg border-b pb-2 flex items-center gap-2">📊 本機學生學習歷程</h4>
+          <div id="teacher-stats-summary" class="space-y-3 text-sm"></div>
+        </div>
+      </div>
+
+      <!-- Complete Data Inspection Box -->
+      <div class="bg-slate-900 text-slate-200 rounded-2xl p-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <h4 class="font-bold text-slate-300 text-sm">💻 JavaScript DATA 教材物件檢視 (const DATA)</h4>
+          <span class="text-xs text-slate-400">若需增修內容，請直接修改 HTML 檔內的 DATA 變數</span>
+        </div>
+        <pre id="teacher-json-preview" class="bg-slate-950 p-4 rounded-xl text-xs font-mono overflow-x-auto text-emerald-400 max-h-60 custom-scrollbar"></pre>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 font-bold">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>🎯 B3U2 英語口語對話互動學習站｜翰林版 Unit 2 特教友善教材</p>
+      <p>無障礙・大字體・多感官・語音跟讀支援</p>
+    </div>
+  </footer>
+
+  <!-- MODAL: STATS -->
+  <div id="modal-stats" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 border border-slate-100">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-xl font-black text-slate-800 flex items-center gap-2">🏆 我的學習成績與獎章</h3>
+        <button onclick="app.closeStatsModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold">&times;</button>
+      </div>
+      <div id="stats-content" class="space-y-4"></div>
+      <button onclick="app.closeStatsModal()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-lg transition">
+        確定並繼續練習
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL: MISTAKES -->
+  <div id="modal-mistakes" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 border border-slate-100 max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-xl font-black text-slate-800 flex items-center gap-2">❌ 我的錯題再練本</h3>
+        <button onclick="app.closeMistakesModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold">&times;</button>
+      </div>
+      <div id="mistakes-content" class="flex-1 overflow-y-auto custom-scrollbar space-y-3 py-2"></div>
+      <div class="pt-2 border-t flex gap-3">
+        <button onclick="app.clearMistakes()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition">
+          清空錯題
+        </button>
+        <button onclick="app.closeMistakesModal()" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl text-sm transition shadow-md">
+          關閉
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CONFIRM CLEAR RECORDS -->
+  <div id="modal-clear-confirm" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-5 text-center">
+      <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center text-3xl mx-auto">
+        ⚠️
+      </div>
+      <div>
+        <h3 class="text-xl font-black text-slate-900">確定要清除學習紀錄嗎？</h3>
+        <p class="text-sm font-bold text-slate-500 mt-2">清除後，所有完成進度、得分與錯題本都會被清空，無法復原。</p>
+      </div>
+      <div class="flex items-center gap-3 pt-2">
+        <button onclick="app.confirmClearRecords()" class="flex-1 py-3 bg-rose-600 hover:bg-rose-700 text-white font-black rounded-xl shadow-md transition">
+          是的，確定清除
+        </button>
+        <button onclick="app.closeClearRecordModal()" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition">
+          取消
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =================================================================
+       【教師 DATA 物件】
+       教師未來可直接修改此物件內容，無須修改底下程式碼。
+       ================================================================= */
+    const DATA = {
+      unit: "B3U2",
+      title: "B3U2 英語口語對話互動學習站",
+      grade: "國中資源班特教友善版",
+      
+      // 核心單字
+      vocabulary: [
+        { word: "camera", zh: "相機", emoji: "📷" },
+        { word: "homework", zh: "功課；作業", emoji: "📚" },
+        { word: "hands", zh: "雙手", emoji: "🧼" },
+        { word: "phone", zh: "電話", emoji: "📞" },
+        { word: "video game", zh: "電玩遊戲", emoji: "🎮" },
+        { word: "club", zh: "社團", emoji: "🏫" }
+      ],
+
+      // 核心片語
+      phrases: [
+        { phrase: "speak to...", zh: "和……通話", emoji: "🗣️" },
+        { phrase: "think about it", zh: "考慮一下", emoji: "🤔" },
+        { phrase: "call back", zh: "再回電話", emoji: "📞" },
+        { phrase: "right away", zh: "立刻；馬上", emoji: "⚡" },
+        { phrase: "wash hands", zh: "洗手", emoji: "🧼" }
+      ],
+
+      // 核心口訣與句型重點
+      grammarTips: [
+        {
+          title: "打電話自我介紹",
+          rule: "打電話自我介紹要使用 This is... 不能使用 I am...",
+          example: "Hello! This is Cody."
+        },
+        {
+          title: "所有格代名詞",
+          rule: "mine = my camera (我的)；hers = her camera (她的)",
+          example: "It's mine. It's not hers."
+        },
+        {
+          title: "AFTER（在……之後）",
+          rule: "AFTER 句型＝先做 A，再做 B。（B 發生在 A 之後）",
+          example: "I call my friend after I finish my homework."
+        },
+        {
+          title: "BEFORE（在……之前）",
+          rule: "BEFORE 句型＝A 發生在 B 之前。（先做 A，再做 B）",
+          example: "Please wash your hands before you eat lunch."
+        },
+        {
+          title: "WHEN（當……的時候）",
+          rule: "WHEN 句型＝表示兩個動作在同一個情境中連貫發生。",
+          example: "When I hear the phone, I answer it right away."
+        }
+      ],
+
+      // 6張口語對話卡完整資料
+      dialogueCards: [
+        {
+          id: 1,
+          tag: "電話打招呼與找人",
+          icon: "☎️",
+          title: "打電話找人",
+          speakerA: "Cody",
+          speakerB: "Yuki",
+          sentenceA: "Hello! This is Cody. May I speak to Yuki, please?",
+          zhA: "你好！我是 Cody。請問可以找 Yuki 通話嗎？",
+          sentenceB: "Speaking! What's up, Cody?",
+          zhB: "我就是！有什麼事嗎，Cody？",
+          keyPoints: ["This is...", "Speaking!", "What's up?"],
+          mnemonic: "打電話自我介紹要使用：This is... 不能使用：I am...",
+          timeline: null,
+          unscrambleSentences: [
+            { text: "This is Cody.", zh: "我是 Cody。" },
+            { text: "May I speak to Yuki?", zh: "我可以找 Yuki 通話嗎？" }
+          ],
+          quizQuestions: [
+            {
+              type: "mc",
+              q: "打電話時，如何用英文說「我是 Cody」？",
+              options: ["This is Cody.", "I am Cody.", "My name is Cody."],
+              ans: 0,
+              hint: "打電話自我介紹記得要用 This is..."
+            },
+            {
+              type: "mc",
+              q: "電話接聽者說「Speaking!」代表什麼意思？",
+              options: ["請正在講話！", "我就是本人！", "請大聲一點！"],
+              ans: 1,
+              hint: "Speaking! 就是「我就是本人／我正在聽」"
+            },
+            {
+              type: "mc",
+              q: "「What's up?」在電話對話中是什麼意思？",
+              options: ["往上看！", "有什麼事嗎？", "你是誰？"],
+              ans: 1,
+              hint: "What's up? 是常見打招呼用語：「有什麼事嗎？」"
+            },
+            {
+              type: "unscramble",
+              words: ["May", "I", "speak", "to", "Yuki?"],
+              ansText: "May I speak to Yuki?",
+              zh: "我可以和 Yuki 通話嗎？"
+            },
+            {
+              type: "mc",
+              q: "下列哪一句電話對答是正確的？",
+              options: [
+                "A: May I speak to Yuki? / B: Speaking!",
+                "A: I am Cody on phone. / B: Who are you?",
+                "A: Are you Yuki? / B: I am speaking now."
+              ],
+              ans: 0,
+              hint: "找人問 May I speak to...? 本人回答 Speaking!"
+            }
+          ]
+        },
+        {
+          id: 2,
+          tag: "詢問物品所有權",
+          icon: "📷",
+          title: "誰的相機？",
+          speakerA: "Cody",
+          speakerB: "Yuki",
+          sentenceA: "Whose camera is this?",
+          zhA: "這台相機是誰的？",
+          sentenceB: "It's mine. It's not hers.",
+          zhB: "它是我的。不是她的。",
+          keyPoints: ["Whose...?", "mine", "hers"],
+          mnemonic: "mine = my camera（我的相機）\nhers = her camera（她的相機）",
+          timeline: null,
+          unscrambleSentences: [
+            { text: "Whose camera is this?", zh: "這台相機是誰的？" },
+            { text: "It's mine. It's not hers.", zh: "它是我的。不是她的。" }
+          ],
+          quizQuestions: [
+            {
+              type: "mc",
+              q: "英文想問「這是誰的相機？」，開頭要用哪一個字？",
+              options: ["Whose", "Who", "What"],
+              ans: 0,
+              hint: "詢問物品屬於「誰的」要用 Whose"
+            },
+            {
+              type: "mc",
+              q: "句子中「It's mine.」的 mine 等於什麼？",
+              options: ["my camera", "your camera", "her camera"],
+              ans: 0,
+              hint: "mine 是所有格代名詞，代表 my camera"
+            },
+            {
+              type: "mc",
+              q: "「It's not hers.」中的 hers 代表什麼？",
+              options: ["she camera", "her camera", "his camera"],
+              ans: 1,
+              hint: "hers 等於 her + 名詞 (her camera)"
+            },
+            {
+              type: "unscramble",
+              words: ["It's", "mine.", "It's", "not", "hers."],
+              ansText: "It's mine. It's not hers.",
+              zh: "它是我的。不是她的。"
+            },
+            {
+              type: "mc",
+              q: "看圖片 📷，選擇正確句子：",
+              options: ["Whose camera is this?", "What camera is this?", "Where is the camera?"],
+              ans: 0,
+              hint: "詢問相機是誰的：Whose camera is this?"
+            }
+          ]
+        },
+        {
+          id: 3,
+          tag: "after 時間連詞",
+          icon: "📚",
+          title: "AFTER 完成作業後",
+          speakerA: "Cody",
+          speakerB: "Yuki",
+          sentenceA: "What do you do after you finish homework?",
+          zhA: "你寫完作業之後會做什麼？",
+          sentenceB: "I call my friend after I finish my homework.",
+          zhB: "我在完成作業之後，會打電話給朋友。",
+          keyPoints: ["after", "finish homework", "call my friend"],
+          mnemonic: "AFTER ＝ 先做 A（寫作業），再做 B（打電話）。B 在 A 之後！",
+          timeline: {
+            concept: "AFTER",
+            step1Icon: "📚",
+            step1Text: "先：finish homework (寫完作業)",
+            step2Icon: "📞",
+            step2Text: "再：call my friend (打電話)",
+            summary: "先完成作業，再打電話。"
+          },
+          unscrambleSentences: [
+            { text: "I call my friend after I finish homework.", zh: "我在寫完作業後打電話給朋友。" }
+          ],
+          quizQuestions: [
+            {
+              type: "mc",
+              q: "「after」在中文是什麼意思？",
+              options: ["在……之後", "在……之前", "當……的時候"],
+              ans: 0,
+              hint: "after 代表在某個動作之後"
+            },
+            {
+              type: "mc",
+              q: "「I call my friend after I finish my homework.」哪件事先發生？",
+              options: ["先寫完作業", "先打電話給朋友", "兩件事同時發生"],
+              ans: 0,
+              hint: "after 後面接先發生的動作（寫完作業）"
+            },
+            {
+              type: "mc",
+              q: "填空：What do you do ______ you finish homework?",
+              options: ["after", "before", "where"],
+              ans: 0,
+              hint: "詢問做完某事「之後」做什麼用 after"
+            },
+            {
+              type: "unscramble",
+              words: ["I", "call", "my", "friend", "after", "I", "finish", "homework."],
+              ansText: "I call my friend after I finish homework.",
+              zh: "我在寫完作業後打給朋友。"
+            },
+            {
+              type: "mc",
+              q: "依照口訣「AFTER＝先 A 再 B」，順序何者正確？",
+              options: [
+                "📚 寫作業 ➡️ 📞 打電話",
+                "📞 打電話 ➡️ 📚 寫作業",
+                "同時邊寫作業邊打電話"
+              ],
+              ans: 0,
+              hint: "先完成作業 📚，再打電話 📞"
+            }
+          ]
+        },
+        {
+          id: 4,
+          tag: "before 時間連詞",
+          icon: "🧼",
+          title: "BEFORE 吃午餐前",
+          speakerA: "Cody",
+          speakerB: "Yuki",
+          sentenceA: "Please wash your hands before you eat lunch.",
+          zhA: "請你在吃午餐之前洗手。",
+          sentenceB: "Okay, I always wash my hands before I eat.",
+          zhB: "好的，我吃東西前都會洗手。",
+          keyPoints: ["before", "wash hands", "eat lunch"],
+          mnemonic: "BEFORE ＝ A 在 B 之前。（先洗手 🧼，再吃飯 🍱）",
+          timeline: {
+            concept: "BEFORE",
+            step1Icon: "🧼",
+            step1Text: "先：wash hands (洗手)",
+            step2Icon: "🍱",
+            step2Text: "再：eat lunch (吃午餐)",
+            summary: "在吃午餐之前，要先洗手。"
+          },
+          unscrambleSentences: [
+            { text: "Wash your hands before you eat lunch.", zh: "吃午餐前請洗手。" }
+          ],
+          quizQuestions: [
+            {
+              type: "mc",
+              q: "「before」在中文是什麼意思？",
+              options: ["在……之前", "在……之後", "當……的時候"],
+              ans: 0,
+              hint: "before 代表在某事發生之前"
+            },
+            {
+              type: "mc",
+              q: "「wash your hands before you eat lunch」應該先做什麼？",
+              options: ["先洗手", "先吃午餐", "先打電話"],
+              ans: 0,
+              hint: "吃午餐「之前」要先洗手！"
+            },
+            {
+              type: "mc",
+              q: "填空：I always wash my hands ______ I eat.",
+              options: ["before", "after", "under"],
+              ans: 0,
+              hint: "吃東西之前要洗手：before"
+            },
+            {
+              type: "unscramble",
+              words: ["Please", "wash", "your", "hands", "before", "you", "eat."],
+              ansText: "Please wash your hands before you eat.",
+              zh: "請在吃東西前洗手。"
+            },
+            {
+              type: "mc",
+              q: "看圖像 🧼 ➡️ 🍱，代表的句型是？",
+              options: [
+                "Wash hands before you eat.",
+                "Eat lunch before you wash hands.",
+                "Wash hands after you sleep."
+              ],
+              ans: 0,
+              hint: "先洗手，再吃飯：Wash hands before you eat."
+            }
+          ]
+        },
+        {
+          id: 5,
+          tag: "when 時間連詞",
+          icon: "📞",
+          title: "WHEN 電話響時",
+          speakerA: "Cody",
+          speakerB: "Yuki",
+          sentenceA: "What do you do when you hear the phone ringing?",
+          zhA: "當你聽到電話響時，你會做什麼？",
+          sentenceB: "When I hear the phone, I answer it right away.",
+          zhB: "當我聽到電話響時，我會立刻接起來。",
+          keyPoints: ["when", "hear the phone", "answer right away"],
+          mnemonic: "WHEN ＝ 當……的時候（兩個動作在同一情境連貫發生）。",
+          timeline: {
+            concept: "WHEN",
+            step1Icon: "📞",
+            step1Text: "情境：phone rings (電話響起)",
+            step2Icon: "📱",
+            step2Text: "反應：answer right away (立刻接起)",
+            summary: "當電話響時，立刻接起來。"
+          },
+          unscrambleSentences: [
+            { text: "When I hear the phone, I answer it right away.", zh: "當我聽到電話響時，我立刻接起來。" }
+          ],
+          quizQuestions: [
+            {
+              type: "mc",
+              q: "「when」在句子中常常翻譯為什麼？",
+              options: ["當……的時候", "在……之後", "在……之前"],
+              ans: 0,
+              hint: "when 連接時間點：「當……的時候」"
+            },
+            {
+              type: "mc",
+              q: "片語「right away」是什麼意思？",
+              options: ["立刻；馬上", "往右走", "慢慢地"],
+              ans: 0,
+              hint: "right away 表示「立刻、馬上」"
+            },
+            {
+              type: "mc",
+              q: "填空：What do you do ______ you hear the phone ringing?",
+              options: ["when", "whose", "mine"],
+              ans: 0,
+              hint: "「當」聽到電話響時：when"
+            },
+            {
+              type: "unscramble",
+              words: ["When", "I", "hear", "the", "phone,", "I", "answer", "it."],
+              ansText: "When I hear the phone, I answer it.",
+              zh: "當我聽到電話，我就接起來。"
+            },
+            {
+              type: "mc",
+              q: "當電話響起 📞，正確的反應句子是？",
+              options: [
+                "I answer it right away.",
+                "I wash my hands.",
+                "It's not hers."
+              ],
+              ans: 0,
+              hint: "聽到電話響，立刻接電話 answer it right away"
+            }
+          ]
+        },
+        {
+          id: 6,
+          tag: "考慮與稍後回電",
+          icon: "🎮",
+          title: "電玩社團與考慮",
+          speakerA: "Cody",
+          speakerB: "Yuki",
+          sentenceA: "Do you want to join our Video Game Design Club?",
+          zhA: "你想加入我們的電玩設計社團嗎？",
+          sentenceB: "Can I think about it and call you back?",
+          zhB: "我可以考慮一下再打電話給你嗎？",
+          keyPoints: ["think about it", "call you back", "Video Game Design Club"],
+          mnemonic: "think about it = 考慮一下 ； call you back = 再回電話給你",
+          timeline: null,
+          unscrambleSentences: [
+            { text: "Can I think about it?", zh: "我可以考慮一下嗎？" },
+            { text: "I will call you back.", zh: "我會再回電話給你。" }
+          ],
+          quizQuestions: [
+            {
+              type: "mc",
+              q: "片語「think about it」是什麼意思？",
+              options: ["考慮一下", "直接拒絕", "非常喜歡"],
+              ans: 0,
+              hint: "think about it 表示「考慮一下」"
+            },
+            {
+              type: "mc",
+              q: "片語「call you back」是什麼意思？",
+              options: ["再回電話給你", "掛斷電話", "叫你回來"],
+              ans: 0,
+              hint: "call you back 代表「晚點再回電」"
+            },
+            {
+              type: "mc",
+              q: "想邀請對方加入社團，可以用哪句？",
+              options: [
+                "Do you want to join our club?",
+                "Whose camera is this?",
+                "Wash your hands."
+              ],
+              ans: 0,
+              hint: "邀請加入社團用 Do you want to join...?"
+            },
+            {
+              type: "unscramble",
+              words: ["Can", "I", "think", "about", "it?"],
+              ansText: "Can I think about it?",
+              zh: "我可以考慮一下嗎？"
+            },
+            {
+              type: "mc",
+              q: "對話配對：A: Do you want to join our club? / B: ______",
+              options: [
+                "Can I think about it and call you back?",
+                "This is Cody speaking.",
+                "It's not hers."
+              ],
+              ans: 0,
+              hint: "回應邀請可以說：我可以考慮一下再回電嗎？"
+            }
+          ]
+        }
+      ]
+    };
+  </script>
+
+  <script>
+    /* =================================================================
+       【核心應用程式邏輯 (JavaScript App Engine)】
+       ================================================================= */
+    class EnglishLearningApp {
+      constructor() {
+        this.currentCardIndex = 0;
+        this.currentStepIndex = 0;
+        this.teacherMode = false;
+        
+        // 學生學習狀態 (localStorage)
+        this.userStats = this.loadStats();
+        this.mistakes = this.loadMistakes();
+
+        // 語音引擎狀態
+        this.synth = window.speechSynthesis;
+        this.recognition = null;
+        this.isRecording = false;
+
+        // 當前練習狀態
+        this.unscrambleCurrent = [];
+        this.unscrambleTarget = [];
+        this.quizAttempt = 0;
+        this.dailyChallengeIndex = 0;
+        this.dailyQuestions = [];
+
+        this.initSpeechRecognition();
+      }
+
+      /* --- LocalStorage 持久化管理 --- */
+      loadStats() {
+        const saved = localStorage.getItem('B3U2_STATS');
+        if (saved) {
+          try { return JSON.parse(saved); } catch(e){}
+        }
+        return {
+          completedCards: [],
+          stars: 0,
+          totalPractices: 0,
+          correctAnswers: 0
+        };
+      }
+
+      saveStats() {
+        localStorage.setItem('B3U2_STATS', JSON.stringify(this.userStats));
+      }
+
+      loadMistakes() {
+        const saved = localStorage.getItem('B3U2_MISTAKES');
+        if (saved) {
+          try { return JSON.parse(saved); } catch(e){}
+        }
+        return [];
+      }
+
+      saveMistakes() {
+        localStorage.setItem('B3U2_MISTAKES', JSON.stringify(this.mistakes));
+        this.updateMistakeBadge();
+      }
+
+      addMistake(questionObj) {
+        if (!this.mistakes.some(m => m.q === questionObj.q)) {
+          this.mistakes.push(questionObj);
+          this.saveMistakes();
+        }
+      }
+
+      updateMistakeBadge() {
+        const badge = document.getElementById('mistake-count-badge');
+        if (badge) {
+          if (this.mistakes.length > 0) {
+            badge.innerText = this.mistakes.length;
+            badge.classList.remove('hidden');
+          } else {
+            badge.classList.add('hidden');
+          }
+        }
+      }
+
+      /* --- 語音合成 TTS (Speech Synthesis) --- */
+      speak(text, rate = 0.9) {
+        if (!this.synth) return;
+        this.synth.cancel(); // 停止先前的發音
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = rate; // 0.9 正常，0.7 慢速
+        utterance.pitch = 1.0;
+        this.synth.speak(utterance);
+      }
+
+      /* --- 語音辨識 STT (Speech Recognition Fallback) --- */
+      initSpeechRecognition() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+          this.recognition = new SpeechRecognition();
+          this.recognition.lang = 'en-US';
+          this.recognition.interimResults = false;
+          this.recognition.maxAlternatives = 1;
+        }
+      }
+
+      /* --- 初始化視圖 --- */
+      init() {
+        this.renderHomeCards();
+        this.updateMistakeBadge();
+        this.renderTeacherData();
+      }
+
+      navHome() {
+        this.showView('view-home');
+        this.renderHomeCards();
+      }
+
+      showView(viewId) {
+        ['view-home', 'view-card-practice', 'view-timeline-game', 'view-teacher-mode'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.classList.add('hidden');
+        });
+        document.getElementById(viewId).classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      /* --- 首頁渲染 6 大大型情境對話卡 --- */
+      renderHomeCards() {
+        const grid = document.getElementById('cards-grid');
+        grid.innerHTML = '';
+
+        DATA.dialogueCards.forEach((card, idx) => {
+          const isDone = this.userStats.completedCards.includes(card.id);
+          const cardEl = document.createElement('div');
+          cardEl.className = `bg-white rounded-3xl p-6 border-2 ${isDone ? 'border-emerald-300 bg-emerald-50/30' : 'border-slate-200'} shadow-md hover:shadow-xl transition duration-300 flex flex-col justify-between group relative overflow-hidden`;
+          
+          cardEl.innerHTML = `
+            ${isDone ? '<span class="absolute top-3 right-3 bg-emerald-500 text-white text-xs px-2.5 py-1 rounded-full font-black">✓ 已完成</span>' : ''}
+            <div>
+              <div class="flex items-center space-x-3 mb-3">
+                <span class="text-4xl p-3 bg-slate-100 rounded-2xl group-hover:scale-110 transition">${card.icon}</span>
+                <div>
+                  <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">卡片 ${card.id}</span>
+                  <h4 class="text-xl font-extrabold text-slate-800 leading-tight mt-0.5">${card.title}</h4>
+                </div>
+              </div>
+              <p class="text-sm font-bold text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-100 italic">
+                "${card.sentenceA}"
+              </p>
+              <div class="mt-3 flex flex-wrap gap-1.5">
+                ${card.keyPoints.map(kp => `<span class="text-xs font-bold bg-amber-100 text-amber-800 px-2.5 py-1 rounded-lg">🔑 ${kp}</span>`).join('')}
+              </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-500">7 步驟固定練習</span>
+              <button onclick="app.startCardPractice(${idx})" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-md transition text-sm flex items-center gap-1">
+                <span>練習這張卡</span> ➔
+              </button>
+            </div>
+          `;
+          grid.appendChild(cardEl);
+        });
+
+        // 更新首頁完成進度
+        const progressEl = document.getElementById('home-progress-text');
+        if (progressEl) {
+          progressEl.innerText = `${this.userStats.completedCards.length} / ${DATA.dialogueCards.length}`;
+        }
+      }
+
+      /* --- 開始對話卡練習 (進入 7 步驟) --- */
+      startCardPractice(cardIdx) {
+        this.currentCardIndex = cardIdx;
+        this.currentStepIndex = 0;
+        this.userStats.totalPractices++;
+        this.saveStats();
+        this.showView('view-card-practice');
+        this.updateCardHeader();
+        this.renderCurrentStep();
+      }
+
+      prevCard() {
+        if (this.currentCardIndex > 0) {
+          this.currentCardIndex--;
+          this.currentStepIndex = 0;
+          this.updateCardHeader();
+          this.renderCurrentStep();
+        }
+      }
+
+      nextCard() {
+        if (this.currentCardIndex < DATA.dialogueCards.length - 1) {
+          this.currentCardIndex++;
+          this.currentStepIndex = 0;
+          this.updateCardHeader();
+          this.renderCurrentStep();
+        }
+      }
+
+      updateCardHeader() {
+        const card = DATA.dialogueCards[this.currentCardIndex];
+        document.getElementById('practice-card-badge').innerText = `卡片 ${card.id} / ${DATA.dialogueCards.length}`;
+        document.getElementById('practice-card-title').innerText = `${card.icon} ${card.title} (${card.tag})`;
+        
+        document.getElementById('btn-prev-card').disabled = (this.currentCardIndex === 0);
+        document.getElementById('btn-next-card').disabled = (this.currentCardIndex === DATA.dialogueCards.length - 1);
+      }
+
+      switchStep(stepIdx) {
+        this.currentStepIndex = stepIdx;
+        this.renderCurrentStep();
+      }
+
+      renderCurrentStep() {
+        // 更新 Tab 標籤樣式
+        document.querySelectorAll('.step-tab').forEach((tab, idx) => {
+          if (idx === this.currentStepIndex) {
+            tab.className = 'step-tab px-3.5 py-2 rounded-xl transition flex items-center gap-1 active-tab font-black';
+          } else {
+            tab.className = 'step-tab px-3.5 py-2 rounded-xl transition flex items-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold';
+          }
+        });
+
+        const card = DATA.dialogueCards[this.currentCardIndex];
+        const container = document.getElementById('step-content');
+        container.innerHTML = '';
+
+        switch (this.currentStepIndex) {
+          case 0: this.renderStep1Look(container, card); break;
+          case 1: this.renderStep2Listen(container, card); break;
+          case 2: this.renderStep3Repeat(container, card); break;
+          case 3: this.renderStep4Select(container, card); break;
+          case 4: this.renderStep5Unscramble(container, card); break;
+          case 5: this.renderStep6Roleplay(container, card); break;
+          case 6: this.renderStep7Quiz(container, card); break;
+        }
+      }
+
+      /* --- ① 看一看 (Look) --- */
+      renderStep1Look(container, card) {
+        container.innerHTML = `
+          <div class="space-y-6">
+            <div class="flex items-center justify-between border-b pb-3">
+              <span class="text-sm font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">① 看一看・對話圖像提示</span>
+              <span class="text-xs font-bold text-slate-400">觀察英文與中文意思</span>
+            </div>
+
+            <!-- 大型圖像與重點提示 -->
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-6 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center gap-6">
+              <div class="text-6xl sm:text-7xl p-4 bg-white/20 rounded-2xl backdrop-blur-md flex-shrink-0">
+                ${card.icon}
+              </div>
+              <div class="space-y-2 text-center sm:text-left">
+                <span class="bg-amber-400 text-slate-900 text-xs font-black px-3 py-1 rounded-full uppercase">學習重點</span>
+                <p class="text-lg sm:text-xl font-bold whitespace-pre-line leading-relaxed">${card.mnemonic}</p>
+              </div>
+            </div>
+
+            <!-- 對話卡 A & B -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Speaker A -->
+              <div class="bg-slate-50 p-5 rounded-2xl border-2 border-indigo-100 space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="font-extrabold text-indigo-700 flex items-center gap-1">👤 A: ${card.speakerA}</span>
+                  <div class="flex items-center gap-1">
+                    <button onclick="app.speak('${card.sentenceA.replace(/'/g, "\\'")}', 0.9)" class="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs flex items-center gap-1 shadow">
+                      🔊 播放
+                    </button>
+                    <button onclick="app.speak('${card.sentenceA.replace(/'/g, "\\'")}', 0.7)" class="p-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-xs flex items-center gap-1 shadow">
+                      🐢 慢速
+                    </button>
+                  </div>
+                </div>
+                <p class="text-xl font-black text-slate-800">${card.sentenceA}</p>
+                <p class="text-base font-bold text-indigo-900 bg-white p-3 rounded-xl border border-indigo-50">${card.zhA}</p>
+              </div>
+
+              <!-- Speaker B -->
+              <div class="bg-slate-50 p-5 rounded-2xl border-2 border-purple-100 space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="font-extrabold text-purple-700 flex items-center gap-1">👤 B: ${card.speakerB}</span>
+                  <div class="flex items-center gap-1">
+                    <button onclick="app.speak('${card.sentenceB.replace(/'/g, "\\'")}', 0.9)" class="p-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold text-xs flex items-center gap-1 shadow">
+                      🔊 播放
+                    </button>
+                    <button onclick="app.speak('${card.sentenceB.replace(/'/g, "\\'")}', 0.7)" class="p-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-xs flex items-center gap-1 shadow">
+                      🐢 慢速
+                    </button>
+                  </div>
+                </div>
+                <p class="text-xl font-black text-slate-800">${card.sentenceB}</p>
+                <p class="text-base font-bold text-purple-900 bg-white p-3 rounded-xl border border-purple-50">${card.zhB}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-6 border-t flex justify-end">
+            <button onclick="app.switchStep(1)" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-lg transition flex items-center gap-2">
+              下一步：② 聽一聽 ➔
+            </button>
+          </div>
+        `;
+      }
+
+      /* --- ② 聽一聽 (Listen & Match) --- */
+      renderStep2Listen(container, card) {
+        this.quizAttempt = 0;
+        container.innerHTML = `
+          <div class="space-y-6">
+            <div class="flex items-center justify-between border-b pb-3">
+              <span class="text-sm font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">② 聽一聽・聽英文選中文</span>
+              <span class="text-xs font-bold text-slate-400">點擊播放，選擇正確的中文意思</span>
+            </div>
+
+            <!-- 音訊播放卡 -->
+            <div class="bg-indigo-50 border border-indigo-200 p-6 rounded-3xl text-center space-y-4">
+              <div class="text-5xl mb-2">${card.icon}</div>
+              <p class="text-sm font-bold text-slate-500">請專心聽語音：</p>
+              <div class="flex justify-center gap-3">
+                <button onclick="app.speak('${card.sentenceA.replace(/'/g, "\\'")}', 0.9)" class="px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl shadow-md transition flex items-center gap-2 text-base">
+                  🔊 播放句型 A
+                </button>
+                <button onclick="app.speak('${card.sentenceB.replace(/'/g, "\\'")}', 0.9)" class="px-5 py-3 bg-purple-600 hover:bg-purple-700 text-white font-black rounded-2xl shadow-md transition flex items-center gap-2 text-base">
+                  🔊 播放句型 B
+                </button>
+              </div>
+            </div>
+
+            <!-- 反饋提示區 -->
+            <div id="step2-feedback" class="hidden p-4 rounded-2xl text-center font-black text-base"></div>
+
+            <!-- 選項 -->
+            <div class="space-y-3">
+              <p class="font-extrabold text-slate-700 text-sm">請問句型 A：「${card.sentenceA}」是什麼意思？</p>
+              <button onclick="app.checkStep2(0, ${card.id})" class="w-full text-left p-4 bg-slate-50 hover:bg-indigo-50 border-2 border-slate-200 hover:border-indigo-300 rounded-2xl font-bold text-slate-800 transition">
+                A. ${card.zhA}
+              </button>
+              <button onclick="app.checkStep2(1, ${card.id})" class="w-full text-left p-4 bg-slate-50 hover:bg-indigo-50 border-2 border-slate-200 hover:border-indigo-300 rounded-2xl font-bold text-slate-800 transition">
+                B. 你想加入電玩設計社團嗎？
+              </button>
+              <button onclick="app.checkStep2(2, ${card.id})" class="w-full text-left p-4 bg-slate-50 hover:bg-indigo-50 border-2 border-slate-200 hover:border-indigo-300 rounded-2xl font-bold text-slate-800 transition">
+                C. 請你在吃午餐之前洗手。
+              </button>
+            </div>
+          </div>
+
+          <div class="pt-6 border-t flex justify-between items-center">
+            <button onclick="app.switchStep(0)" class="px-5 py-2.5 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition">◀️ 上一步</button>
+            <button onclick="app.switchStep(2)" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-lg transition flex items-center gap-2">
+              下一步：③ 跟著說 ➔
+            </button>
+          </div>
+        `;
+      }
+
+      checkStep2(choiceIdx, cardId) {
+        const feedback = document.getElementById('step2-feedback');
+        feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800');
+
+        if (choiceIdx === 0) {
+          feedback.classList.add('bg-emerald-100', 'text-emerald-800');
+          feedback.innerHTML = '🎉 答對了！非常棒！你聽得非常清楚！';
+          this.userStats.correctAnswers++;
+          this.saveStats();
+        } else {
+          this.quizAttempt++;
+          feedback.classList.add('bg-rose-100', 'text-rose-800');
+          if (this.quizAttempt === 1) {
+            feedback.innerHTML = '❌ 再聽一次喔！點擊上面的 🔊 播放按鈕再試試看。';
+          } else {
+            const card = DATA.dialogueCards.find(c => c.id === cardId);
+            feedback.innerHTML = `❌ 提示：此句意思是「${card.zhA}」！再選一次看看。`;
+          }
+        }
+      }
+
+      /* --- ③ 跟著說 (Repeat / Speech Practice) --- */
+      renderStep3Repeat(container, card) {
+        container.innerHTML = `
+          <div class="space-y-6">
+            <div class="flex items-center justify-between border-b pb-3">
+              <span class="text-sm font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">③ 跟著說・英語口語跟讀</span>
+              <span class="text-xs font-bold text-slate-400">先聽標準發音，再大聲唸出來</span>
+            </div>
+
+            <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6 space-y-6">
+              <!-- Sentence A Practice -->
+              <div class="space-y-3 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <span class="text-xs font-black text-indigo-600 uppercase">句型 1</span>
+                <p class="text-2xl font-black text-slate-900">${card.sentenceA}</p>
+                <p class="text-sm font-bold text-slate-500">${card.zhA}</p>
+                <div class="flex flex-wrap gap-2 pt-2">
+                  <button onclick="app.speak('${card.sentenceA.replace(/'/g, "\\'")}', 0.9)" class="px-4 py-2 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 shadow">
+                    🔊 聽標準音
+                  </button>
+                  <button onclick="app.speak('${card.sentenceA.replace(/'/g, "\\'")}', 0.7)" class="px-4 py-2 bg-amber-500 text-white rounded-xl font-bold text-sm hover:bg-amber-600 shadow">
+                    🐢 慢速聽
+                  </button>
+                  <button onclick="app.startMicRecord('record-status-a', '${card.sentenceA.replace(/'/g, "\\'")}')" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold text-sm flex items-center gap-1 shadow">
+                    🎤 換我說 (大聲唸)
+                  </button>
+                </div>
+                <div id="record-status-a" class="text-xs font-bold text-slate-500 min-h-[20px]"></div>
+              </div>
+
+              <!-- Sentence B Practice -->
+              <div class="space-y-3 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <span class="text-xs font-black text-purple-600 uppercase">句型 2</span>
+                <p class="text-2xl font-black text-slate-900">${card.sentenceB}</p>
+                <p class="text-sm font-bold text-slate-500">${card.zhB}</p>
+                <div class="flex flex-wrap gap-2 pt-2">
+                  <button onclick="app.speak('${card.sentenceB.replace(/'/g, "\\'")}', 0.9)" class="px-4 py-2 bg-purple-600 text-white rounded-xl font-bold text-sm hover:bg-purple-700 shadow">
+                    🔊 聽標準音
+                  </button>
+                  <button onclick="app.speak('${card.sentenceB.replace(/'/g, "\\'")}', 0.7)" class="px-4 py-2 bg-amber-500 text-white rounded-xl font-bold text-sm hover:bg-amber-600 shadow">
+                    🐢 慢速聽
+                  </button>
+                  <button onclick="app.startMicRecord('record-status-b', '${card.sentenceB.replace(/'/g, "\\'")}')" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold text-sm flex items-center gap-1 shadow">
+                    🎤 換我說 (大聲唸)
+                  </button>
+                </div>
+                <div id="record-status-b" class="text-xs font-bold text-slate-500 min-h-[20px]"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-6 border-t flex justify-between items-center">
+            <button onclick="app.switchStep(1)" class="px-5 py-2.5 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition">◀️ 上一步</button>
+            <button onclick="app.switchStep(3)" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-lg transition flex items-center gap-2">
+              下一步：④ 選一選 ➔
+            </button>
+          </div>
+        `;
+      }
+
+      startMicRecord(statusId, targetText) {
+        const el = document.getElementById(statusId);
+        if (!this.recognition) {
+          el.className = "text-xs font-bold text-emerald-600";
+          el.innerText = "🌟 讚喔！練習發音成功！已大聲朗讀完成！";
+          this.userStats.stars += 1;
+          this.saveStats();
+          return;
+        }
+
+        el.className = "text-xs font-bold text-amber-600 pulse-subtle";
+        el.innerText = "🎙️ 正在聆聽中……請大聲唸出句子！";
+
+        try {
+          this.recognition.start();
+          this.recognition.onresult = (e) => {
+            const transcript = e.results[0][0].transcript;
+            el.className = "text-xs font-black text-emerald-600";
+            el.innerText = `👍 辨識到發音："${transcript}"！跟讀得非常棒！`;
+            this.userStats.stars += 2;
+            this.saveStats();
+          };
+          this.recognition.onerror = () => {
+            el.className = "text-xs font-bold text-emerald-600";
+            el.innerText = "🌟 自我練習成功！發音非常清晰喔！";
+          };
+        } catch(err) {
+          el.className = "text-xs font-bold text-emerald-600";
+          el.innerText = "🌟 自我練習成功！發音非常清晰喔！";
+        }
+      }
+
+      /* --- ④ 選一選 (Multiple Choice Question) --- */
+      renderStep4Select(container, card) {
+        const qObj = card.quizQuestions[0]; // 核心選擇題
+        container.innerHTML = `
+          <div class="space-y-6">
+            <div class="flex items-center justify-between border-b pb-3">
+              <span class="text-sm font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">④ 選一選・句型與意思測驗</span>
+              <span class="text-xs font-bold text-slate-400">3 選 1，選出最正確答案</span>
+            </div>
+
+            <div class="bg-white border-2 border-indigo-100 p-6 rounded-3xl space-y-4 shadow-sm">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">${card.icon}</span>
+                <h4 class="text-lg font-black text-slate-900">${qObj.q}</h4>
+              </div>
+
+              <div id="step4-feedback" class="hidden p-4 rounded-2xl font-black text-sm"></div>
+
+              <div class="space-y-3 pt-2">
+                ${qObj.options.map((opt, i) => `
+                  <button onclick="app.checkStep4(${i}, ${qObj.ans}, '${qObj.hint.replace(/'/g, "\\'")}')" class="w-full text-left p-4 bg-slate-50 hover:bg-indigo-50 border-2 border-slate-200 hover:border-indigo-300 rounded-2xl font-bold text-slate-800 transition flex items-center gap-3">
+                    <span class="w-7 h-7 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center font-black text-xs">${['A','B','C'][i]}</span>
+                    <span>${opt}</span>
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-6 border-t flex justify-between items-center">
+            <button onclick="app.switchStep(2)" class="px-5 py-2.5 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition">◀️ 上一步</button>
+            <button onclick="app.switchStep(4)" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-lg transition flex items-center gap-2">
+              下一步：⑤ 排一排 ➔
+            </button>
+          </div>
+        `;
+      }
+
+      checkStep4(choice, correctChoice, hint) {
+        const feedback = document.getElementById('step4-feedback');
+        feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800');
+
+        if (choice === correctChoice) {
+          feedback.classList.add('bg-emerald-100', 'text-emerald-800');
+          feedback.innerHTML = '🎉 太棒了！答對了！概念掌握得很好！';
+          this.userStats.correctAnswers++;
+          this.saveStats();
+        } else {
+          feedback.classList.add('bg-rose-100', 'text-rose-800');
+          feedback.innerHTML = `❌ 再想一想喔！💡 提示：${hint}`;
+        }
+      }
+
+      /* --- ⑤ 排一排 (Word Unscramble Blocks) --- */
+      renderStep5Unscramble(container, card) {
+        const item = card.unscrambleSentences[0];
+        const rawWords = item.text.split(' ');
+        // 打亂單字
+        this.unscrambleTarget = [...rawWords];
+        const shuffled = [...rawWords].sort(() => Math.random() - 0.5);
+        this.unscrambleAvailable = [...shuffled];
+        this.unscrambleCurrent = [];
+
+        container.innerHTML = `
+          <div class="space-y-6">
+            <div class="flex items-center justify-between border-b pb-3">
+              <span class="text-sm font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">⑤ 排一排・積木重組句子</span>
+              <span class="text-xs font-bold text-slate-400">點擊積木組合出正確英文句子</span>
+            </div>
+
+            <div class="bg-indigo-50/50 border border-indigo-100 p-6 rounded-3xl space-y-5">
+              <div>
+                <span class="text-xs font-bold text-indigo-600 bg-indigo-100 px-2.5 py-1 rounded-md">目標中文意思</span>
+                <h4 class="text-xl font-extrabold text-slate-800 mt-1">${item.zh}</h4>
+              </div>
+
+              <!-- 組合區 -->
+              <div class="space-y-2">
+                <span class="text-xs font-bold text-slate-500">已排列句子：</span>
+                <div id="unscramble-dropzone" class="min-h-[64px] bg-white border-2 border-dashed border-indigo-300 rounded-2xl p-3 flex flex-wrap gap-2 items-center">
+                  <!-- Word blocks injected here -->
+                </div>
+              </div>
+
+              <!-- 待點擊積木區 -->
+              <div class="space-y-2">
+                <span class="text-xs font-bold text-slate-500">可選單字積木（點擊加入）：</span>
+                <div id="unscramble-pool" class="flex flex-wrap gap-2.5 min-h-[50px]">
+                  <!-- Available word blocks -->
+                </div>
+              </div>
+
+              <!-- 反饋 -->
+              <div id="unscramble-feedback" class="hidden p-4 rounded-2xl font-black text-center text-sm"></div>
+
+              <!-- 控制按鈕 -->
+              <div class="flex flex-wrap gap-3 pt-2">
+                <button onclick="app.speak('${item.text.replace(/'/g, "\\'")}')" class="px-4 py-2.5 bg-indigo-600 text-white rounded-xl font-black text-xs hover:bg-indigo-700 shadow">
+                  🔊 聽完整句音訊
+                </button>
+                <button onclick="app.resetUnscramble()" class="px-4 py-2.5 bg-slate-200 text-slate-700 rounded-xl font-bold text-xs hover:bg-slate-300">
+                  🔄 重新排列
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-6 border-t flex justify-between items-center">
+            <button onclick="app.switchStep(3)" class="px-5 py-2.5 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition">◀️ 上一步</button>
+            <button onclick="app.switchStep(5)" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-lg transition flex items-center gap-2">
+              下一步：⑥ 角色扮演 ➔
+            </button>
+          </div>
+        `;
+
+        this.renderUnscrambleBlocks();
+      }
+
+      renderUnscrambleBlocks() {
+        const dropzone = document.getElementById('unscramble-dropzone');
+        const pool = document.getElementById('unscramble-pool');
+        if (!dropzone || !pool) return;
+
+        dropzone.innerHTML = '';
+        pool.innerHTML = '';
+
+        if (this.unscrambleCurrent.length === 0) {
+          dropzone.innerHTML = `<span class="text-sm font-bold text-slate-400 italic">請點擊下方單字積木...</span>`;
+        } else {
+          this.unscrambleCurrent.forEach((w, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'px-4 py-2 bg-indigo-600 text-white font-black text-base rounded-xl shadow hover:bg-indigo-700 transition';
+            btn.innerText = w;
+            btn.onclick = () => {
+              this.unscrambleAvailable.push(w);
+              this.unscrambleCurrent.splice(idx, 1);
+              this.renderUnscrambleBlocks();
+            };
+            dropzone.appendChild(btn);
+          });
+        }
+
+        this.unscrambleAvailable.forEach((w, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'px-4 py-2 bg-white border-2 border-slate-300 text-slate-800 font-black text-base rounded-xl shadow-sm hover:border-indigo-500 hover:text-indigo-600 transition';
+          btn.innerText = w;
+          btn.onclick = () => {
+            this.unscrambleCurrent.push(w);
+            this.unscrambleAvailable.splice(idx, 1);
+            this.renderUnscrambleBlocks();
+            this.checkUnscrambleResult();
+          };
+          pool.appendChild(btn);
+        });
+      }
+
+      checkUnscrambleResult() {
+        if (this.unscrambleAvailable.length === 0) {
+          const feedback = document.getElementById('unscramble-feedback');
+          feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800');
+          
+          const userStr = this.unscrambleCurrent.join(' ');
+          const targetStr = this.unscrambleTarget.join(' ');
+
+          if (userStr === targetStr) {
+            feedback.classList.add('bg-emerald-100', 'text-emerald-800');
+            feedback.innerHTML = '🎉 句子完成！拼得完全正確！太厲害了！';
+            this.userStats.correctAnswers++;
+            this.saveStats();
+            this.speak(targetStr);
+          } else {
+            feedback.classList.add('bg-rose-100', 'text-rose-800');
+            feedback.innerHTML = '❌ 順序不太對喔！按「🔄 重新排列」再試一次。';
+          }
+        }
+      }
+
+      resetUnscramble() {
+        const card = DATA.dialogueCards[this.currentCardIndex];
+        this.renderStep5Unscramble(document.getElementById('step-content'), card);
+      }
+
+      /* --- ⑥ 角色扮演 (Interactive Roleplay) --- */
+      renderStep6Roleplay(container, card) {
+        container.innerHTML = `
+          <div class="space-y-6">
+            <div class="flex items-center justify-between border-b pb-3">
+              <span class="text-sm font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">⑥ 角色扮演・雙人對話模擬</span>
+              <span class="text-xs font-bold text-slate-400">選擇你想扮演的角色</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <button onclick="app.startRoleplayMode('A', ${card.id})" class="p-6 bg-gradient-to-br from-indigo-50 to-indigo-100 hover:from-indigo-100 hover:to-indigo-200 border-2 border-indigo-300 rounded-3xl text-left space-y-2 transition shadow-sm">
+                <span class="text-3xl">🎭</span>
+                <h4 class="text-xl font-black text-indigo-900">我演 ${card.speakerA} (A)</h4>
+                <p class="text-xs font-bold text-indigo-700">系統播放 ${card.speakerB} 的句子，輪到你大聲說出 A 的對話！</p>
+              </button>
+
+              <button onclick="app.startRoleplayMode('B', ${card.id})" class="p-6 bg-gradient-to-br from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 border-2 border-purple-300 rounded-3xl text-left space-y-2 transition shadow-sm">
+                <span class="text-3xl">🎭</span>
+                <h4 class="text-xl font-black text-purple-900">我演 ${card.speakerB} (B)</h4>
+                <p class="text-xs font-bold text-purple-700">系統播放 ${card.speakerA} 的句子，輪到你大聲說出 B 的對話！</p>
+              </button>
+            </div>
+
+            <!-- 對話演練互動展示區 -->
+            <div id="roleplay-interactive-stage" class="bg-slate-50 border border-slate-200 rounded-3xl p-6 hidden space-y-4">
+              <!-- Dynamic roleplay flow -->
+            </div>
+          </div>
+
+          <div class="pt-6 border-t flex justify-between items-center">
+            <button onclick="app.switchStep(4)" class="px-5 py-2.5 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition">◀️ 上一步</button>
+            <button onclick="app.switchStep(6)" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-lg transition flex items-center gap-2">
+              下一步：⑦ 小挑戰 ➔
+            </button>
+          </div>
+        `;
+      }
+
+      startRoleplayMode(userRole, cardId) {
+        const card = DATA.dialogueCards.find(c => c.id === cardId);
+        const stage = document.getElementById('roleplay-interactive-stage');
+        stage.classList.remove('hidden');
+
+        const isUserA = (userRole === 'A');
+        
+        stage.innerHTML = `
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black text-indigo-700 bg-indigo-100 px-3 py-1 rounded-full">
+                目前演練模式：你扮演 ${isUserA ? card.speakerA : card.speakerB}
+              </span>
+              <button onclick="app.speak('${isUserA ? card.sentenceB.replace(/'/g, "\\'") : card.sentenceA.replace(/'/g, "\\'")}')" class="text-xs font-bold text-indigo-600 hover:underline">
+                🔊 聽對手台詞
+              </button>
+            </div>
+
+            <!-- Dialogue Bubble A -->
+            <div class="p-4 rounded-2xl ${isUserA ? 'bg-indigo-600 text-white shadow-md' : 'bg-slate-200 text-slate-800'} space-y-1">
+              <div class="flex justify-between text-xs opacity-80 font-bold">
+                <span>${card.speakerA} ${isUserA ? '(你)' : '(系統)'}</span>
+                <span>${isUserA ? '🎤 輪到你說' : '🔊 點擊收聽'}</span>
+              </div>
+              <p class="text-lg font-black">${card.sentenceA}</p>
+              <p class="text-xs font-bold opacity-90">${card.zhA}</p>
+            </div>
+
+            <!-- Dialogue Bubble B -->
+            <div class="p-4 rounded-2xl ${!isUserA ? 'bg-purple-600 text-white shadow-md' : 'bg-slate-200 text-slate-800'} space-y-1">
+              <div class="flex justify-between text-xs opacity-80 font-bold">
+                <span>${card.speakerB} ${!isUserA ? '(你)' : '(系統)'}</span>
+                <span>${!isUserA ? '🎤 輪到你說' : '🔊 點擊收聽'}</span>
+              </div>
+              <p class="text-lg font-black">${card.sentenceB}</p>
+              <p class="text-xs font-bold opacity-90">${card.zhB}</p>
+            </div>
+
+            <div class="pt-2 text-center">
+              <button onclick="app.finishRoleplay(${card.id})" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl shadow-lg transition">
+                🎉 完成對話角色演練！
+              </button>
+            </div>
+          </div>
+        `;
+
+        // 自動播放對手的台詞
+        if (isUserA) {
+          this.speak(card.sentenceB);
+        } else {
+          this.speak(card.sentenceA);
+        }
+      }
+
+      finishRoleplay(cardId) {
+        if (!this.userStats.completedCards.includes(cardId)) {
+          this.userStats.completedCards.push(cardId);
+        }
+        this.userStats.stars += 5;
+        this.saveStats();
+
+        const stage = document.getElementById('roleplay-interactive-stage');
+        stage.innerHTML = `
+          <div class="bg-emerald-100 text-emerald-900 p-6 rounded-2xl text-center space-y-3">
+            <span class="text-4xl">🌟🌟🌟</span>
+            <h4 class="text-xl font-black">太讚了！角色扮演成功完成！</h4>
+            <p class="text-sm font-bold">你獲得了 5 顆學習星星！準備好挑戰最後小測驗了嗎？</p>
+          </div>
+        `;
+      }
+
+      /* --- ⑦ 小挑戰 (5-Question Mini Quiz) --- */
+      renderStep7Quiz(container, card) {
+        this.currentQuizCardIndex = 0;
+        this.cardQuestions = card.quizQuestions;
+
+        this.renderCardQuizQuestion(container, card);
+      }
+
+      renderCardQuizQuestion(container, card) {
+        const qObj = this.cardQuestions[this.currentQuizCardIndex];
+        
+        container.innerHTML = `
+          <div class="space-y-6">
+            <div class="flex items-center justify-between border-b pb-3">
+              <span class="text-sm font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">⑦ 小挑戰・卡片 ${card.id} 綜合測驗 (${this.currentQuizCardIndex + 1}/5)</span>
+              <span class="text-xs font-bold text-slate-400">連續答對 5 題獲得獎章</span>
+            </div>
+
+            <div class="bg-white border-2 border-slate-200 p-6 rounded-3xl space-y-4 shadow-sm">
+              <h4 class="text-lg font-black text-slate-900">${qObj.q || qObj.zh}</h4>
+
+              <div id="step7-feedback" class="hidden p-4 rounded-2xl font-black text-sm"></div>
+
+              ${qObj.type === 'mc' ? `
+                <div class="space-y-3">
+                  ${qObj.options.map((opt, i) => `
+                    <button onclick="app.checkStep7(${i}, ${qObj.ans}, ${card.id})" class="w-full text-left p-4 bg-slate-50 hover:bg-indigo-50 border-2 border-slate-200 hover:border-indigo-300 rounded-2xl font-bold text-slate-800 transition">
+                      ${['A','B','C'][i]}. ${opt}
+                    </button>
+                  `).join('')}
+                </div>
+              ` : `
+                <div class="p-4 bg-slate-50 rounded-2xl text-center space-y-3">
+                  <p class="text-sm font-bold text-slate-600">重組句子：${qObj.zh}</p>
+                  <p class="text-xl font-black text-indigo-700">${qObj.ansText}</p>
+                  <button onclick="app.checkStep7(0, 0, ${card.id})" class="px-6 py-3 bg-indigo-600 text-white font-black rounded-xl">
+                    我知道這句了，下一步！
+                  </button>
+                </div>
+              `}
+            </div>
+          </div>
+
+          <div class="pt-6 border-t flex justify-between items-center">
+            <button onclick="app.switchStep(5)" class="px-5 py-2.5 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition">◀️ 上一步</button>
+            <span class="text-xs font-bold text-slate-500">完成後獲取星星</span>
+          </div>
+        `;
+      }
+
+      checkStep7(choice, correct, cardId) {
+        const card = DATA.dialogueCards.find(c => c.id === cardId);
+        const qObj = this.cardQuestions[this.currentQuizCardIndex];
+        const feedback = document.getElementById('step7-feedback');
+        feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800');
+
+        if (choice === correct) {
+          feedback.classList.add('bg-emerald-100', 'text-emerald-800');
+          feedback.innerHTML = '🎉 答對了！非常優秀！';
+          this.userStats.correctAnswers++;
+          this.saveStats();
+
+          setTimeout(() => {
+            this.currentQuizCardIndex++;
+            if (this.currentQuizCardIndex < this.cardQuestions.length) {
+              this.renderCardQuizQuestion(document.getElementById('step-content'), card);
+            } else {
+              this.finishCardQuiz(card);
+            }
+          }, 1200);
+        } else {
+          feedback.classList.add('bg-rose-100', 'text-rose-800');
+          feedback.innerHTML = `❌ 答錯了喔！💡 提示：${qObj.hint || '再試一次！'}`;
+          this.addMistake(qObj);
+        }
+      }
+
+      finishCardQuiz(card) {
+        if (!this.userStats.completedCards.includes(card.id)) {
+          this.userStats.completedCards.push(card.id);
+        }
+        this.userStats.stars += 10;
+        this.saveStats();
+
+        const container = document.getElementById('step-content');
+        container.innerHTML = `
+          <div class="text-center space-y-6 py-8">
+            <div class="text-6xl animate-bounce">⭐⭐⭐⭐⭐</div>
+            <div class="space-y-2">
+              <h3 class="text-2xl font-black text-slate-900">恭喜完成卡片 ${card.id} 所有的練習！</h3>
+              <p class="text-base font-bold text-slate-600">你順利通過看、聽、說、選、排、演與小挑戰！獲得了 10 顆獎勵星星！</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-4 pt-4">
+              <button onclick="app.navHome()" class="px-6 py-3 bg-slate-800 text-white font-black rounded-2xl shadow-lg hover:bg-slate-900 transition">
+                🏠 返回首頁卡片選單
+              </button>
+              ${this.currentCardIndex < DATA.dialogueCards.length - 1 ? `
+                <button onclick="app.nextCard()" class="px-6 py-3 bg-indigo-600 text-white font-black rounded-2xl shadow-lg hover:bg-indigo-700 transition">
+                  🚀 繼續挑戰下一張對話卡 ➔
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }
+
+      /* =================================================================
+         【時間線遊戲 (AFTER / BEFORE / WHEN Timeline Tool)】
+         ================================================================= */
+      openTimelineGame() {
+        this.showView('view-timeline-game');
+        this.loadTimelineConcept('after');
+      }
+
+      loadTimelineConcept(type) {
+        // Toggle Active Button Styles
+        ['after', 'before', 'when'].forEach(t => {
+          const btn = document.getElementById(`tl-btn-${t}`);
+          if (t === type) {
+            btn.className = 'px-5 py-3 rounded-2xl font-black text-base border transition bg-indigo-600 text-white border-indigo-400 shadow-lg';
+          } else {
+            btn.className = 'px-5 py-3 rounded-2xl font-black text-base border transition bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700';
+          }
+        });
+
+        const box = document.getElementById('timeline-interactive-box');
+        
+        if (type === 'after') {
+          box.innerHTML = `
+            <div class="space-y-6">
+              <div class="border-b border-white/10 pb-3 flex justify-between items-center">
+                <span class="text-sm font-black text-amber-300">📚 概念 1：AFTER（在……之後）</span>
+                <span class="text-xs text-slate-300 font-bold">口訣：AFTER ＝ 先 A，再 B</span>
+              </div>
+
+              <!-- Visual Timeline Arrows -->
+              <div class="bg-slate-900/80 p-6 rounded-2xl border border-white/10 space-y-6">
+                <p class="text-center text-lg font-bold text-indigo-200">
+                  例句："I call my friend <span class="text-amber-400 font-black">after</span> I finish homework."
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 text-center">
+                  <!-- Step 1 -->
+                  <div class="bg-slate-800 p-5 rounded-2xl border-2 border-emerald-400 flex-1 w-full space-y-2">
+                    <span class="text-xs font-black text-emerald-400 uppercase">第 1 步 (先發生)</span>
+                    <div class="text-4xl">📚</div>
+                    <p class="text-base font-black">finish homework</p>
+                    <p class="text-xs text-slate-400">寫完功課作業</p>
+                  </div>
+
+                  <div class="text-3xl font-black text-amber-400 rotate-90 sm:rotate-0">➔</div>
+
+                  <!-- Step 2 -->
+                  <div class="bg-slate-800 p-5 rounded-2xl border-2 border-indigo-400 flex-1 w-full space-y-2">
+                    <span class="text-xs font-black text-indigo-400 uppercase">第 2 步 (再發生)</span>
+                    <div class="text-4xl">📞</div>
+                    <p class="text-base font-black">call my friend</p>
+                    <p class="text-xs text-slate-400">打電話給朋友</p>
+                  </div>
+                </div>
+
+                <div class="bg-indigo-950 p-4 rounded-xl text-center text-sm font-bold text-indigo-200 border border-indigo-800">
+                  💡 提醒：因為 AFTER 的存在，代表「打電話」是在「完成作業」之後進行！
+                </div>
+              </div>
+
+              <div class="text-center">
+                <button onclick="app.speak('I call my friend after I finish my homework.')" class="px-6 py-3 bg-amber-400 hover:bg-amber-500 text-slate-950 font-black rounded-2xl shadow-lg transition">
+                  🔊 聆聽發音
+                </button>
+              </div>
+            </div>
+          `;
+        } else if (type === 'before') {
+          box.innerHTML = `
+            <div class="space-y-6">
+              <div class="border-b border-white/10 pb-3 flex justify-between items-center">
+                <span class="text-sm font-black text-sky-300">🧼 概念 2：BEFORE（在……之前）</span>
+                <span class="text-xs text-slate-300 font-bold">口訣：BEFORE ＝ A 在 B 之前</span>
+              </div>
+
+              <div class="bg-slate-900/80 p-6 rounded-2xl border border-white/10 space-y-6">
+                <p class="text-center text-lg font-bold text-sky-200">
+                  例句："Please wash your hands <span class="text-sky-400 font-black">before</span> you eat lunch."
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 text-center">
+                  <!-- Step 1 -->
+                  <div class="bg-slate-800 p-5 rounded-2xl border-2 border-sky-400 flex-1 w-full space-y-2">
+                    <span class="text-xs font-black text-sky-400 uppercase">先做這個動作</span>
+                    <div class="text-4xl">🧼</div>
+                    <p class="text-base font-black">wash your hands</p>
+                    <p class="text-xs text-slate-400">先洗手</p>
+                  </div>
+
+                  <div class="text-3xl font-black text-sky-400 rotate-90 sm:rotate-0">➔</div>
+
+                  <!-- Step 2 -->
+                  <div class="bg-slate-800 p-5 rounded-2xl border-2 border-purple-400 flex-1 w-full space-y-2">
+                    <span class="text-xs font-black text-purple-400 uppercase">再做這個動作</span>
+                    <div class="text-4xl">🍱</div>
+                    <p class="text-base font-black">eat lunch</p>
+                    <p class="text-xs text-slate-400">吃午餐</p>
+                  </div>
+                </div>
+
+                <div class="bg-sky-950 p-4 rounded-xl text-center text-sm font-bold text-sky-200 border border-sky-800">
+                  💡 提醒：在「吃午餐」這件事情之前，必須「先把手洗乾淨」！
+                </div>
+              </div>
+
+              <div class="text-center">
+                <button onclick="app.speak('Please wash your hands before you eat lunch.')" class="px-6 py-3 bg-sky-400 hover:bg-sky-500 text-slate-950 font-black rounded-2xl shadow-lg transition">
+                  🔊 聆聽發音
+                </button>
+              </div>
+            </div>
+          `;
+        } else if (type === 'when') {
+          box.innerHTML = `
+            <div class="space-y-6">
+              <div class="border-b border-white/10 pb-3 flex justify-between items-center">
+                <span class="text-sm font-black text-purple-300">📞 概念 3：WHEN（當……的時候）</span>
+                <span class="text-xs text-slate-300 font-bold">口訣：WHEN ＝ 同一情境連貫發生</span>
+              </div>
+
+              <div class="bg-slate-900/80 p-6 rounded-2xl border border-white/10 space-y-6">
+                <p class="text-center text-lg font-bold text-purple-200">
+                  例句 me："<span class="text-purple-400 font-black">When</span> I hear the phone, I answer it right away."
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 text-center">
+                  <!-- Event -->
+                  <div class="bg-slate-800 p-5 rounded-2xl border-2 border-rose-400 flex-1 w-full space-y-2">
+                    <span class="text-xs font-black text-rose-400 uppercase">發生的事件</span>
+                    <div class="text-4xl">📞</div>
+                    <p class="text-base font-black">hear the phone ring</p>
+                    <p class="text-xs text-slate-400">聽到電話響起</p>
+                  </div>
+
+                  <div class="text-3xl font-black text-purple-400 rotate-90 sm:rotate-0">⚡</div>
+
+                  <!-- Action -->
+                  <div class="bg-slate-800 p-5 rounded-2xl border-2 border-emerald-400 flex-1 w-full space-y-2">
+                    <span class="text-xs font-black text-emerald-400 uppercase">立即反應</span>
+                    <div class="text-4xl">📱</div>
+                    <p class="text-base font-black">answer right away</p>
+                    <p class="text-xs text-slate-400">立刻接起電話</p>
+                  </div>
+                </div>
+
+                <div class="bg-purple-950 p-4 rounded-xl text-center text-sm font-bold text-purple-200 border border-purple-800">
+                  💡 提醒：WHEN 強調「當 A 事情發生時，緊接著進行 B 動作」！
+                </div>
+              </div>
+
+              <div class="text-center">
+                <button onclick="app.speak('When I hear the phone, I answer it right away.')" class="px-6 py-3 bg-purple-400 hover:bg-purple-500 text-slate-950 font-black rounded-2xl shadow-lg transition">
+                  🔊 聆聽發音
+                </button>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      /* =================================================================
+         【今日 5 分鐘隨機微挑戰 (Daily 5-Min Challenge)】
+         ================================================================= */
+      startDailyChallenge() {
+        // 從全部 DATA 隨機抽出混合題目
+        this.dailyQuestions = [
+          { type: 'vocab', q: "請聽音訊選出單字：📷", word: "camera", options: ["相機", "電話", "雙手"], ans: 0 },
+          { type: 'vocab', q: "「think about it」是什麼意思？", options: ["考慮一下", "回電話", "洗手"], ans: 0 },
+          { type: 'grammar', q: "打電話自我介紹要用？", options: ["This is...", "I am...", "My name..."], ans: 0 },
+          { type: 'grammar', q: "AFTER 的口訣是？", options: ["先做 A，再做 B", "A 在 B 之前", "當……的時候"], ans: 0 },
+          { type: 'grammar', q: "「mine」等於？", options: ["my camera", "her camera", "your phone"], ans: 0 }
+        ];
+
+        this.dailyChallengeIndex = 0;
+        this.showView('view-card-practice');
+        document.getElementById('practice-card-badge').innerText = `⭐ 今日 5 分鐘隨機任務`;
+        document.getElementById('practice-card-title').innerText = `快速打卡練習 (${this.dailyChallengeIndex + 1}/5)`;
+
+        this.renderDailyQuestion();
+      }
+
+      renderDailyQuestion() {
+        const qObj = this.dailyQuestions[this.dailyChallengeIndex];
+        const container = document.getElementById('step-content');
+
+        container.innerHTML = `
+          <div class="space-y-6">
+            <div class="flex items-center justify-between border-b pb-3">
+              <span class="text-sm font-black text-amber-600 bg-amber-50 px-3 py-1 rounded-full">⏱️ 今日 5 分鐘挑戰 (${this.dailyChallengeIndex + 1}/5)</span>
+              <span class="text-xs font-bold text-slate-400">每天 5 分鐘，學習不中斷</span>
+            </div>
+
+            <div class="bg-amber-50/40 border-2 border-amber-200 p-6 rounded-3xl space-y-5">
+              <h4 class="text-xl font-black text-slate-900">${qObj.q}</h4>
+
+              <div id="daily-feedback" class="hidden p-4 rounded-2xl font-black text-sm"></div>
+
+              <div class="space-y-3">
+                ${qObj.options.map((opt, i) => `
+                  <button onclick="app.checkDailyQuestion(${i}, ${qObj.ans})" class="w-full text-left p-4 bg-white border-2 border-slate-200 hover:border-amber-400 rounded-2xl font-bold text-slate-800 transition">
+                    ${['A','B','C'][i]}. ${opt}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-6 border-t flex justify-end">
+            <span class="text-xs font-bold text-slate-500">持續練習累積星星 🌟</span>
+          </div>
+        `;
+      }
+
+      checkDailyQuestion(choice, correct) {
+        const feedback = document.getElementById('daily-feedback');
+        feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800');
+
+        if (choice === correct) {
+          feedback.classList.add('bg-emerald-100', 'text-emerald-800');
+          feedback.innerHTML = '🎉 答對了！太厲害了！';
+          this.userStats.correctAnswers++;
+          this.userStats.stars += 2;
+          this.saveStats();
+
+          setTimeout(() => {
+            this.dailyChallengeIndex++;
+            if (this.dailyChallengeIndex < this.dailyQuestions.length) {
+              document.getElementById('practice-card-title').innerText = `快速打卡練習 (${this.dailyChallengeIndex + 1}/5)`;
+              this.renderDailyQuestion();
+            } else {
+              this.finishDailyChallenge();
+            }
+          }, 1000);
+        } else {
+          feedback.classList.add('bg-rose-100', 'text-rose-800');
+          feedback.innerHTML = '❌ 再試試看喔！';
+        }
+      }
+
+      finishDailyChallenge() {
+        const container = document.getElementById('step-content');
+        container.innerHTML = `
+          <div class="text-center space-y-6 py-8">
+            <div class="text-6xl">🌟 今日任務完成 🌟</div>
+            <div class="space-y-2">
+              <h3 class="text-2xl font-black text-slate-900">恭喜完成今日 5 分鐘英語口語練習！</h3>
+              <p class="text-base font-bold text-slate-600">持之以恆，你的英語口語與聽力越來越進步囉！</p>
+            </div>
+            <button onclick="app.navHome()" class="px-6 py-3 bg-indigo-600 text-white font-black rounded-2xl shadow-lg hover:bg-indigo-700 transition">
+              🏠 返回首頁
+            </button>
+          </div>
+        `;
+      }
+
+      /* --- 統計與彈窗 --- */
+      openStatsModal() {
+        const content = document.getElementById('stats-content');
+        content.innerHTML = `
+          <div class="grid grid-cols-2 gap-3 text-center">
+            <div class="bg-indigo-50 p-4 rounded-2xl border border-indigo-100">
+              <span class="text-xs font-bold text-indigo-600">完成卡片</span>
+              <p class="text-2xl font-black text-indigo-900">${this.userStats.completedCards.length} / 6</p>
+            </div>
+            <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100">
+              <span class="text-xs font-bold text-amber-600">累積星星</span>
+              <p class="text-2xl font-black text-amber-900">⭐ ${this.userStats.stars}</p>
+            </div>
+            <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
+              <span class="text-xs font-bold text-emerald-600">總答對題數</span>
+              <p class="text-2xl font-black text-emerald-900">${this.userStats.correctAnswers} 題</p>
+            </div>
+            <div class="bg-purple-50 p-4 rounded-2xl border border-purple-100">
+              <span class="text-xs font-bold text-purple-600">總練習次數</span>
+              <p class="text-2xl font-black text-purple-900">${this.userStats.totalPractices} 次</p>
+            </div>
+          </div>
+        `;
+        document.getElementById('modal-stats').classList.remove('hidden');
+      }
+
+      closeStatsModal() {
+        document.getElementById('modal-stats').classList.add('hidden');
+      }
+
+      openMistakesModal() {
+        const content = document.getElementById('mistakes-content');
+        if (this.mistakes.length === 0) {
+          content.innerHTML = `
+            <div class="text-center py-8 space-y-2">
+              <span class="text-4xl">🎉</span>
+              <h4 class="text-lg font-black text-slate-800">太棒了！目前沒有錯題！</h4>
+              <p class="text-xs text-slate-500 font-bold">繼續保持，你是英語小達人！</p>
+            </div>
+          `;
+        } else {
+          content.innerHTML = this.mistakes.map((m, i) => `
+            <div class="p-4 bg-rose-50 border border-rose-200 rounded-2xl space-y-1">
+              <div class="flex justify-between text-xs font-bold text-rose-700">
+                <span>錯題 ${i + 1}</span>
+                <span>💡 複習練習</span>
+              </div>
+              <p class="font-extrabold text-slate-900 text-sm">${m.q || m.zh}</p>
+              <p class="text-xs font-bold text-rose-800">答案提示：${m.hint || '請重新至對話卡複習'}</p>
+            </div>
+          `).join('');
+        }
+        document.getElementById('modal-mistakes').classList.remove('hidden');
+      }
+
+      closeMistakesModal() {
+        document.getElementById('modal-mistakes').classList.add('hidden');
+      }
+
+      clearMistakes() {
+        this.mistakes = [];
+        this.saveMistakes();
+        this.openMistakesModal();
+      }
+
+      /* =================================================================
+         【教師模式 (Teacher Mode)】
+         ================================================================= */
+      toggleTeacherMode() {
+        this.teacherMode = !this.teacherMode;
+        const btnText = document.getElementById('teacher-mode-btn-text');
+        
+        if (this.teacherMode) {
+          btnText.innerText = '🔙 離開教師模式';
+          this.showView('view-teacher-mode');
+          this.renderTeacherData();
+        } else {
+          btnText.innerText = '👩‍🏫 教師模式';
+          this.navHome();
+        }
+      }
+
+      renderTeacherData() {
+        // 單字清單
+        const vocabList = document.getElementById('teacher-vocab-list');
+        vocabList.innerHTML = DATA.vocabulary.map(v => `
+          <li class="flex items-center justify-between p-2 bg-slate-50 rounded-xl">
+            <span class="font-black text-indigo-700">${v.emoji} ${v.word}</span>
+            <span class="font-bold text-slate-600">${v.zh}</span>
+          </li>
+        `).join('');
+
+        // 句型規則
+        const grammarList = document.getElementById('teacher-grammar-list');
+        grammarList.innerHTML = DATA.grammarTips.map(g => `
+          <li class="p-3 bg-slate-50 rounded-xl space-y-1">
+            <span class="font-black text-amber-700 text-xs bg-amber-100 px-2 py-0.5 rounded">📌 ${g.title}</span>
+            <p class="font-bold text-slate-800 text-xs">${g.rule}</p>
+          </li>
+        `).join('');
+
+        // 數據摘要
+        const statsSummary = document.getElementById('teacher-stats-summary');
+        statsSummary.innerHTML = `
+          <p class="font-bold text-slate-700">完成卡片數：<span class="font-black text-indigo-600">${this.userStats.completedCards.length} / 6</span></p>
+          <p class="font-bold text-slate-700">獲得總星星：<span class="font-black text-amber-600">${this.userStats.stars} 顆</span></p>
+          <p class="font-bold text-slate-700">累積答對題數：<span class="font-black text-emerald-600">${this.userStats.correctAnswers} 題</span></p>
+          <p class="font-bold text-slate-700">未收錄錯題本數量：<span class="font-black text-rose-600">${this.mistakes.length} 題</span></p>
+        `;
+
+        // DATA 物件 JSON 檢視
+        document.getElementById('teacher-json-preview').innerText = JSON.stringify(DATA, null, 2);
+      }
+
+      openClearRecordModal() {
+        document.getElementById('modal-clear-confirm').classList.remove('hidden');
+      }
+
+      closeClearRecordModal() {
+        document.getElementById('modal-clear-confirm').classList.add('hidden');
+      }
+
+      confirmClearRecords() {
+        localStorage.removeItem('B3U2_STATS');
+        localStorage.removeItem('B3U2_MISTAKES');
+        this.userStats = { completedCards: [], stars: 0, totalPractices: 0, correctAnswers: 0 };
+        this.mistakes = [];
+        this.saveStats();
+        this.saveMistakes();
+        this.closeClearRecordModal();
+        this.renderTeacherData();
+      }
+    }
+
+    // 初始化 App 全局實例
+    let app;
+    window.onload = () => {
+      app = new EnglishLearningApp();
+      app.init();
+    };
+  </script>
+</body>
+</html>
